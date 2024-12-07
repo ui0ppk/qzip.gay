@@ -1,0 +1,23 @@
+@use 'sass:color';
+@use 'sass:math';
+
+@function tint-color($color, $weight) {
+  @return color.mix(#fff, $color, $weight);
+}
+
+@function shade-color($color, $weight) {
+  @return color.mix(#000, $color, $weight);
+}
+
+@function bg-text-color($background) {
+  @if (
+    color.channel($background, "red", $space: rgb) * 0.299 
+    + 
+    color.channel($background, "green", $space: rgb) * 0.597 + 
+    +
+    color.channel($background, "blue", $space: rgb) * 0.114) > 186 {
+    @return #000;
+  } @else {
+    @return #fff;
+  }
+}

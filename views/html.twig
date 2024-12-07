@@ -1,0 +1,59 @@
+{%- if x_spa -%}
+{"title": "{{ title ?? req.path }} | {{ config.site.name }}"}\\
+{%- block content %}{% endblock -%}
+{%- else -%}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/normalize.css">
+    <link rel="stylesheet" href="/assets/css/core.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap-icons.min.css">
+    {# <link rel="icon" type="image/png" href="/assets/img/logo-t_64.png"> #}
+    <meta property="og:site_name" content="{{ config.site.name }}">
+    <meta property="og:image" content="/assets/img/logo-t_64.png" />
+    <meta content="{{ title ?? pagename }}" property="og:title">
+    <meta content="{{ config.site.desc }}" property="og:description">
+    <meta name="theme-color" content="#650fde">
+    <script defer src="/assets/js/alpine.js"></script>
+    <script defer src="/assets/js/core.js"></script>
+    <title>{{ title ?? req.path }} | {{ config.site.name }}</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="navbar" x-data="{
+        current_item: {},
+        items: [
+          { name: `home`, url: `/` },
+          { name: `projects`, url: `/projects/` },
+          { name: `art`, url: `/art/` },
+          { name: `files`, url: `/files/` },
+        ]
+      }">
+        <div class="navbar-branding">
+          <h2>qzip's website</h2>
+        </div>
+        <div class="navbar-items">
+          <template x-for="(item, id) in items">
+            <div @click="app.set_url(item.url); current_item = items[id];" :active="current_item == items[id]" x-text="item.name">^.^</div>
+          </template>
+        </div>
+      </div>
+      <main>{% block content %}{% endblock %}</main>
+      <footer>
+        <div>made with <i class="bi bi-heart-fill"></i> and Alpine.js</div> 
+        <div class="end">qzip | testcore-labs @2024</div>
+      </footer>
+
+      {# to finish #}
+      {# <music>
+        <div class="bi bi-play-fill"></div>
+        <div class="progress-bar">
+          <div class="progressed" style="width: 50%;"></div>
+        </div>
+      </music> #}
+    </div>
+  </body>
+</html>
+{%- endif -%}

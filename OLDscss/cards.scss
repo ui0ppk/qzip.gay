@@ -1,0 +1,50 @@
+@use "config.scss";
+@use "funcs.scss";
+@use "sass:map";
+@use "sass:color";
+
+@mixin cardify($bg) {
+  $text-color: funcs.bg-text-color($bg);
+  background: $bg;
+  color: $text-color;
+  padding: 0.5em;
+  border-radius: config.$rounding;
+  box-sizing: border-box;
+}
+@mixin cardify-pane($border-bg) {
+  $bg: rgba($border-bg, 0.7);
+  $text-color: funcs.bg-text-color($bg);
+  border: 0.1em solid $border-bg;
+  background: $bg;
+  color: $text-color;
+  padding: 0.5em;
+  border-radius: config.$rounding;
+  box-sizing: border-box;
+}
+
+.card {
+  background: var(--card-background);
+  color: var(--card-color);
+  padding: 0.5em;
+  border-radius: config.$rounding;
+  box-sizing: border-box;
+}
+
+.card-primary {
+  @include cardify(map.get(config.$primary-shades, "200"));
+}
+.card-secondary {
+  @include cardify(map.get(config.$secondary-shades, "300"));
+}
+.card-gray {
+  @include cardify(map.get(config.$gray-shades, "300"));
+}
+.card-primary-pane {
+  @include cardify-pane(map.get(config.$primary-shades, "200"));
+}
+.card-secondary-pane {
+  @include cardify-pane(map.get(config.$secondary-shades, "700"));
+}
+.card-gray-pane {
+  @include cardify-pane(map.get(config.$gray-shades, "300"));
+}

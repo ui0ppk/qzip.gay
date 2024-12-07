@@ -1,0 +1,138 @@
+@use "./funcs.scss";
+// colors
+$indigo-purple: #7700ff;
+$lime-green:      #9fff46;
+$gray: #373737; 
+$white: #ffffff; 
+$black: #000000; 
+
+
+$link-colors: (
+  "link": #b18aff,
+  "visited": #b18aff,
+  "active": #9662ff,
+  "hover": #9662ff
+);
+
+$light-theme: (
+  "body-background": #fff,
+  "body-color": #000,
+  "input-background": #f4f4f4,
+  "input-color": #000000,
+  "input-border": 0.1em solid #bebebe,
+  "card-background": #e8e8e8,
+  "card-color": #000000,
+);
+$dark-theme: (
+  "body-background": #000,
+  "body-color": #fff,
+  "input-background": #111111,
+  "input-color": #fff,
+  "input-border": 0.1em solid #343434,
+  "card-background": #242424,
+  "card-color": #ffffff,
+);
+
+// flippable switches
+$default-theme: "dark";
+$rounding: 0.25em;
+
+$theme: $light-theme;
+
+@if $default-theme == "dark" {
+  $theme: $dark-theme;
+} 
+@if $default-theme == "light" {
+  $theme: $light-theme;
+}
+
+$primary: $indigo-purple;
+$secondary: $lime-green;
+
+$primary-shades: (
+  "100":  funcs.tint-color($primary, 40%),
+  "200":  funcs.tint-color($primary, 30%),
+  "300":  funcs.tint-color($primary, 20%),
+  "400":  funcs.tint-color($primary, 10%),
+  "500":                   $primary,
+  "600": funcs.shade-color($primary, 10%),
+  "700": funcs.shade-color($primary, 20%),
+  "800": funcs.shade-color($primary, 30%),
+  "900": funcs.shade-color($primary, 40%)
+);
+
+$secondary-shades: (
+  "100":  funcs.tint-color($secondary, 40%),
+  "200":  funcs.tint-color($secondary, 30%),
+  "300":  funcs.tint-color($secondary, 20%),
+  "400":  funcs.tint-color($secondary, 10%),
+  "500":                   $secondary,
+  "600": funcs.shade-color($secondary, 10%),
+  "700": funcs.shade-color($secondary, 20%),
+  "800": funcs.shade-color($secondary, 30%),
+  "900": funcs.shade-color($secondary, 40%)
+);
+
+$gray-shades: (
+  "100":  funcs.tint-color($gray, 40%),
+  "200":  funcs.tint-color($gray, 30%),
+  "300":  funcs.tint-color($gray, 20%),
+  "400":  funcs.tint-color($gray, 10%),
+  "500":                   $gray,
+  "600": funcs.shade-color($gray, 10%),
+  "700": funcs.shade-color($gray, 20%),
+  "800": funcs.shade-color($gray, 30%),
+  "900": funcs.shade-color($gray, 40%)
+);
+
+$dark-shades: (
+  "100":  funcs.tint-color($black, 10%),
+  "200":  funcs.tint-color($black, 20%),
+  "300":  funcs.tint-color($black, 30%),
+  "400":  funcs.tint-color($black, 40%),
+  "500":  funcs.tint-color($black, 50%),
+  "600":  funcs.tint-color($black, 60%),
+  "700":  funcs.tint-color($black, 70%),
+  "800":  funcs.tint-color($black, 80%),
+  "900":  funcs.tint-color($black, 90%),
+);
+$light-shades: (
+  "100": funcs.shade-color($white, 10%),
+  "200": funcs.shade-color($white, 20%),
+  "300": funcs.shade-color($white, 30%),
+  "400": funcs.shade-color($white, 40%),
+  "500": funcs.shade-color($white, 50%),
+  "600": funcs.shade-color($white, 60%),
+  "700": funcs.shade-color($white, 70%),
+  "800": funcs.shade-color($white, 80%),
+  "900": funcs.shade-color($white, 90%),
+);
+
+$space-values: (
+  "auto": auto,
+  "0": "0em",
+  "1": "0.1em",
+  "2": "0.25em",
+  "3": "0.5em",
+  "4": "0.75em",
+  "5": "1em",
+  "6": "1.125em",
+  "7": "1.25em",
+  "8": "1.5em",
+  "9": "1.75em",
+  "10": "2em",
+);
+ 
+$space-values-noauto: (
+  "0": "0em",
+  "1": "0.1em",
+  "2": "0.25em",
+  "3": "0.5em",
+  "4": "0.75em",
+  "5": "1em",
+  "6": "1.125em",
+  "7": "1.25em",
+  "8": "1.5em",
+  "9": "1.75em",
+  "10": "2em",
+);

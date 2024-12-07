@@ -1,0 +1,114 @@
+{% extends "html.twig" %}
+
+{% block content %}
+<div class="d-flex flex-column gap-1 mt-1">
+<div class="d-flex flex-row gap-1">
+<div class="bold h2">CSS Testing</div>
+</div>
+<div class="d-flex flex-row gap-3">
+  <div class="d-flex flex-column gap-3 my-1">
+  <div class="bold h4">Buttons</div>
+    <div class="d-flex flex-row gap-2 flex-wrap">
+      <button class="btn-primary">btn-primary</button>
+      <button class="btn-secondary">btn-secondary</button>
+      <button class="btn-gray">btn-gray</button>
+      <button class="btn-dark">btn-dark</button>
+      <button class="btn-light">btn-light</button>
+    </div>
+    <div class="bold h4">Inputs</div>
+    <div class="d-flex flex-row gap-2 flex-wrap">
+      <input placeholder="my@mail.me" type="email">
+      <input placeholder="123.456" type="number">
+      <input placeholder="cute cat pictures" type="search">
+      <input placeholder="i am text" type="text">
+      <input placeholder="+370 686 42781" type="tel">
+      <input placeholder="https://tc-labs.win/" type="url">
+      <input placeholder="iAmS3CuR3#1!1" type="password">
+    </div>
+    <div class="bold h4">Cards</div>
+    <div class="d-flex flex-row flex-wrap gap-2">
+      <div class="card-primary" style="width: 15em;">
+        <div class="bold h3">card-primary</div>
+        <div>mow</div>
+      </div>
+      <div class="card-secondary" style="width: 15em;">
+        <div class="bold h3">card-secondary</div>
+        <div>mow</div>
+      </div>
+      <div class="card-gray" style="width: 15em;">
+        <div class="bold h3">card-gray</div>
+        <div>mow</div>
+      </div>
+      <div class="card-primary-pane" style="width: 15em;">
+        <div class="bold h3">card-primary-pane</div>
+        <div>mow</div>
+      </div>
+      <div class="card-secondary-pane" style="width: 15em;">
+        <div class="bold h3">card-secondary-pane</div>
+        <div>mow</div>
+      </div>
+      <div class="card-gray-pane" style="width: 15em;">
+        <div class="bold h3">card-gray-pane</div>
+        <div>mow</div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex flex-column gap-2 p-3 ms-auto text-center" style="min-width: 7em;">
+    <div class="semi-bold mb-2">primary</div>
+    <div class="semi-bold bg-primary-shade-100 br-2 p-1 s5">bg-primary-shade-100</div>
+    <div class="semi-bold bg-primary-shade-200 br-2 p-1 s5">bg-primary-shade-200</div>
+    <div class="semi-bold bg-primary-shade-300 br-2 p-1 s5">bg-primary-shade-300</div>
+    <div class="semi-bold bg-primary-shade-400 br-2 p-1 s5">bg-primary-shade-400</div>
+    <div class="semi-bold bg-primary-shade-500 br-2 p-1 s5">bg-primary-shade-500</div>
+    <div class="semi-bold bg-primary-shade-600 br-2 p-1 s5">bg-primary-shade-600</div>
+    <div class="semi-bold bg-primary-shade-700 br-2 p-1 s5">bg-primary-shade-700</div>
+    <div class="semi-bold bg-primary-shade-800 br-2 p-1 s5">bg-primary-shade-800</div>
+    <div class="semi-bold bg-primary-shade-900 br-2 p-1 s5">bg-primary-shade-900</div>
+
+    <div class="semi-bold mb-2 mt-4">secondary</div>
+    <div class="semi-bold bg-secondary-shade-100 br-2 p-1 s5">bg-secondary-shade-100</div>
+    <div class="semi-bold bg-secondary-shade-200 br-2 p-1 s5">bg-secondary-shade-200</div>
+    <div class="semi-bold bg-secondary-shade-300 br-2 p-1 s5">bg-secondary-shade-300</div>
+    <div class="semi-bold bg-secondary-shade-400 br-2 p-1 s5">bg-secondary-shade-400</div>
+    <div class="semi-bold bg-secondary-shade-500 br-2 p-1 s5">bg-secondary-shade-500</div>
+    <div class="semi-bold bg-secondary-shade-600 br-2 p-1 s5">bg-secondary-shade-600</div>
+    <div class="semi-bold bg-secondary-shade-700 br-2 p-1 s5">bg-secondary-shade-700</div>
+    <div class="semi-bold bg-secondary-shade-800 br-2 p-1 s5">bg-secondary-shade-800</div>
+    <div class="semi-bold bg-secondary-shade-900 br-2 p-1 s5">bg-secondary-shade-900</div>
+
+    <div class="semi-bold mb-2 mt-4">gray</div>
+    <div class="semi-bold bg-gray-shade-100 br-2 p-1 s5">bg-gray-shade-100</div>
+    <div class="semi-bold bg-gray-shade-200 br-2 p-1 s5">bg-gray-shade-200</div>
+    <div class="semi-bold bg-gray-shade-300 br-2 p-1 s5">bg-gray-shade-300</div>
+    <div class="semi-bold bg-gray-shade-400 br-2 p-1 s5">bg-gray-shade-400</div>
+    <div class="semi-bold bg-gray-shade-500 br-2 p-1 s5">bg-gray-shade-500</div>
+    <div class="semi-bold bg-gray-shade-600 br-2 p-1 s5">bg-gray-shade-600</div>
+    <div class="semi-bold bg-gray-shade-700 br-2 p-1 s5">bg-gray-shade-700</div>
+    <div class="semi-bold bg-gray-shade-800 br-2 p-1 s5">bg-gray-shade-800</div>
+    <div class="semi-bold bg-gray-shade-900 br-2 p-1 s5">bg-gray-shade-900</div>
+
+    <div class="semi-bold mb-2 mt-4">dark</div>
+    <div class="semi-bold bg-dark-shade-100 br-2 p-1 s5">bg-dark-shade-100</div>
+    <div class="semi-bold bg-dark-shade-200 br-2 p-1 s5">bg-dark-shade-200</div>
+    <div class="semi-bold bg-dark-shade-300 br-2 p-1 s5">bg-dark-shade-300</div>
+    <div class="semi-bold bg-dark-shade-400 br-2 p-1 s5">bg-dark-shade-400</div>
+    <div class="semi-bold bg-dark-shade-500 br-2 p-1 s5">bg-dark-shade-500</div>
+    <div class="semi-bold bg-dark-shade-600 br-2 p-1 s5">bg-dark-shade-600</div>
+    <div class="semi-bold bg-dark-shade-700 br-2 p-1 s5">bg-dark-shade-700</div>
+    <div class="semi-bold bg-dark-shade-800 br-2 p-1 s5">bg-dark-shade-800</div>
+    <div class="semi-bold bg-dark-shade-900 br-2 p-1 s5">bg-dark-shade-900</div>
+
+    <div class="semi-bold mb-2 mt-4">light</div>
+    <div class="semi-bold bg-light-shade-100 br-2 p-1 s5">bg-light-shade-100</div>
+    <div class="semi-bold bg-light-shade-200 br-2 p-1 s5">bg-light-shade-200</div>
+    <div class="semi-bold bg-light-shade-300 br-2 p-1 s5">bg-light-shade-300</div>
+    <div class="semi-bold bg-light-shade-400 br-2 p-1 s5">bg-light-shade-400</div>
+    <div class="semi-bold bg-light-shade-500 br-2 p-1 s5">bg-light-shade-500</div>
+    <div class="semi-bold bg-light-shade-600 br-2 p-1 s5">bg-light-shade-600</div>
+    <div class="semi-bold bg-light-shade-700 br-2 p-1 s5">bg-light-shade-700</div>
+    <div class="semi-bold bg-light-shade-800 br-2 p-1 s5">bg-light-shade-800</div>
+    <div class="semi-bold bg-light-shade-900 br-2 p-1 s5">bg-light-shade-900</div>
+  </div>
+</div>
+</div>
+{% endblock %}

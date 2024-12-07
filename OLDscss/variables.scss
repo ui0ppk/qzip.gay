@@ -1,0 +1,32 @@
+@use "./config.scss";
+:root {
+  --default-theme: #{config.$default-theme};
+}
+
+html[theme="light"] {
+  @each $key, $value in config.$light-theme {
+    --#{$key}: #{$value};
+  }
+}
+
+html[theme="dark"] {
+  @each $key, $value in config.$dark-theme {
+    --#{$key}: #{$value};
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html[theme="auto"] {
+    @each $key, $value in config.$light-theme {
+      --#{$key}: #{$value};
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html[theme="auto"] {
+    @each $key, $value in config.$dark-theme {
+      --#{$key}: #{$value};
+    }
+  }
+}

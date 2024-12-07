@@ -1,0 +1,320 @@
+@use "config.scss";
+@use "funcs.scss";
+
+.semi-bold {
+  font-weight: 600;
+}
+.bold {
+  font-weight: bold;
+}
+.h1, h1 {
+  font-size: 2em;
+}
+.h2, h2 {
+  font-size: 1.75em;
+}
+.h3, h3 {
+  font-size: 1.5em;
+}
+.h4, h4 {
+  font-size: 1.25em;
+}
+.h5, h5 {
+  font-size: 1.125em
+}
+.h6, h6 {
+  font-size: 1em;
+}
+
+.s1 {
+  font-size: 0.95em;
+}
+.s2 {
+  font-size: 0.9em;
+}
+.s3 {
+  font-size: 0.85em;
+}
+.s4 {
+  font-size: 0.8em;
+}
+.s5 {
+  font-size: 0.75em
+}
+.s6 {
+  font-size: 0.7em;
+}
+
+
+.container {
+  max-width: 860px; 
+  width: 100%;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.flex-row {
+  flex-direction: row;
+}
+.flex-column {
+  flex-direction: column;
+}
+.align-self-baseline, .as-baseline {
+  align-self: baseline;
+}
+.align-items-center, .ai-center {
+  align-items: center;
+}
+.justify-content-center, .jc-center  {
+  justify-content: center;
+}
+.flex-center-xy {
+  justify-content: center;
+  align-items: center;
+}
+
+// margins & paddings
+@each $name, $size in config.$space-values {
+  .m-#{$name} {
+    margin: #{$size};
+  }
+  .my-#{$name} {
+    margin-top: #{$size};
+    margin-bottom: #{$size};
+  }
+  .mx-#{$name} {
+    margin-left: #{$size};
+    margin-right: #{$size};
+  }
+  .ms-#{$name} {
+    margin-left: #{$size};
+  }
+  .me-#{$name} {
+    margin-right: #{$size};
+  }
+  .mt-#{$name} {
+    margin-top: #{$size};
+  }
+  .mb-#{$name} {
+    margin-bottom: #{$size};
+  }
+
+  .p-#{$name} {
+    padding: #{$size};
+  }
+  .py-#{$name} {
+    padding-top: #{$size};
+    padding-bottom: #{$size};
+  }
+  .px-#{$name} {
+    padding-left: #{$size};
+    padding-right: #{$size};
+  }
+  .ps-#{$name} {
+    padding-left: #{$size};
+  }
+  .pe-#{$name} {
+    padding-right: #{$size};
+  }
+  .pt-#{$name} {
+    padding-top: #{$size};
+  }
+  .pb-#{$name} {
+    padding-bottom: #{$size};
+  }
+} 
+
+.text-start {
+  text-align: start;
+}
+.text-center {
+  text-align: center;
+}
+.text-end {
+  text-align: end;
+}
+
+// rounding
+@each $name, $size in config.$space-values-noauto {
+  .gap-#{$name} {
+    gap: #{$size};
+  }
+
+  @each $shade, $color in config.$primary-shades {
+    .b-#{$name}-primary-#{$shade} {
+      border: #{$size} solid #{$color};
+    }
+  }
+  @each $shade, $color in config.$secondary-shades {
+    .b-#{$name}-secondary-#{$shade} {
+      border: #{$size} solid #{$color};
+    }
+  }
+  @each $shade, $color in config.$gray-shades {
+    .b-#{$name}-gray-#{$shade} {
+      border: #{$size} solid #{$color};
+    }
+  }
+  @each $shade, $color in config.$dark-shades {
+    .b-#{$name}-dark-#{$shade} {
+      border: #{$size} solid #{$color};
+    }
+  }
+  @each $shade, $color in config.$light-shades {
+    .b-#{$name}-light-#{$shade} {
+      border: #{$size} solid #{$color};
+    }
+  }
+
+  .br-#{$name} {
+    border-radius: #{$size};
+  }
+
+  .brt-#{$name} {
+    border-top-left-radius: #{$size};
+    border-top-right-radius: #{$size};
+  }
+  .brb-#{$name} {
+    border-bottom-left-radius: #{$size};
+    border-bottom-right-radius: #{$size};
+  }
+  .brs-#{$name} {
+    border-bottom-left-radius: #{$size};
+    border-top-left-radius: #{$size};
+  }
+  .bre-#{$name} {
+    border-bottom-right-radius: #{$size};
+    border-top-right-radius: #{$size};
+  }
+  
+  .brts-#{$name} {
+    border-top-left-radius: #{$size};
+  }
+  .brbs-#{$name} {
+    border-bottom-left-radius: #{$size};
+  }
+  .brte-#{$name} {
+    border-top-right-radius: #{$size};
+  }
+  .brbe-#{$name} {
+    border-bottom-right-radius: #{$size};
+  }
+} 
+
+@each $size, $color in config.$primary-shades {
+  .bg-primary-shade-#{$size} {
+    background-color: $color;
+    color: funcs.bg-text-color($color);
+  }
+}
+@each $size, $color in config.$secondary-shades {
+  .bg-secondary-shade-#{$size} {
+    background-color: $color;
+    color: funcs.bg-text-color($color);
+  }
+}
+@each $size, $color in config.$gray-shades {
+  .bg-gray-shade-#{$size} {
+    background-color: $color;
+    color: funcs.bg-text-color($color);
+  }
+}
+@each $size, $color in config.$dark-shades {
+  .bg-dark-shade-#{$size} {
+    background-color: $color;
+    color: funcs.bg-text-color($color);
+  }
+}
+@each $size, $color in config.$light-shades {
+  .bg-light-shade-#{$size} {
+    background-color: $color;
+    color: funcs.bg-text-color($color);
+  }
+}
+
+
+.pos-absolute {
+  position: absolute;
+}
+.pos-static {
+  position: static;
+}
+.pos-relative {
+  position: relative;
+}
+.pos-fixed {
+  position: fixed;
+}
+.pos-sticky {
+  position: sticky;
+}
+
+@each $i in (0, 50, 100) {
+  .h-#{$i} {
+    height: #{$i * 1%};
+  }
+  .w-#{$i} {
+    width: #{$i * 1%};
+  }
+  .top-#{$i} {
+    top: #{$i * 1%};
+  }
+  .bottom-#{$i} {
+    bottom: #{$i * 1%};
+  }
+  .left-#{$i} {
+    left: #{$i * 1%};
+  }
+  .right-#{$i} {
+    right: #{$i * 1%};
+  }
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-scroll {
+  overflow: scroll;
+}
+.overflow-visible {
+  overflow: visible;
+}
+.overflow-x-auto {
+  overflow-x: auto;
+}
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
+.overflow-x-scroll {
+  overflow-x: scroll;
+}
+.overflow-x-visible {
+  overflow-x: visible;
+}
+.overflow-y-auto {
+  overflow-y: visible;
+}
+.overflow-y-hidden {
+  overflow-y: hidden;
+}
+.overflow-y-scroll {
+  overflow-y: scroll;
+}
+.overflow-y-visible {
+  overflow-y: visible;
+}
+
+.border-box {
+  box-sizing: border-box;
+}
+.content-box {
+  box-sizing: content-box;
+}

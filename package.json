@@ -1,0 +1,37 @@
+{
+  "name": "qzip-site",
+  "module": "src/main.ts",
+  "scripts": {
+    "web:serve": "bun src/main.ts",
+    "dev:serve": "nodemon -e ts,twig,yaml --exec 'bun src/main.ts'",
+    "css:watch": "bun nodemon --watch scss/**/*.scss -x \"bun run css:build #\" -e scss",
+    "css:build": "sass scss/core.scss scss/build/core.pcss && postcss scss/build/core.pcss --use autoprefixer -o public/assets/css/core.css"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/express": "^5.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "@types/dateformat": "^5.0.2",
+    "autoprefixer": "^10.4.20",
+    "cookie-parser": "^1.4.7",
+    "dateformat": "^5.0.3",
+    "express": "^4.21.1",
+    "express-async-handler": "^1.2.0",
+    "express-query-parser": "^1.3.3",
+    "fast-printf": "^1.6.9",
+    "get-root-path": "^2.0.2",
+    "nodemon": "^3.1.7",
+    "picocolors": "^1.1.1",
+    "postcss": "^8.4.49",
+    "postcss-cli": "^11.0.0",
+    "sass": "^1.81.0",
+    "timeago.js": "^4.0.2",
+    "twig": "https://github.com/testcore-labs/twiggle"
+  }
+}

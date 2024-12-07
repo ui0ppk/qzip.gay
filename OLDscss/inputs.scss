@@ -1,0 +1,146 @@
+@use "config.scss";
+@use "funcs.scss";
+@use "sass:map";
+@use "sass:color";
+
+@mixin button-mixin(
+  $bg: map.get(config.$primary-shades, "300"), 
+  $bg-hover: map.get(config.$primary-shades, "400"), 
+  $bg-active: map.get(config.$primary-shades, "900")
+  ) {
+  display: inline-block;
+  font-weight: 500;
+  font-size: 0.9em;
+  padding: 0.2em 0.5em;
+  border-radius: config.$rounding;
+  border: 0.1em solid funcs.tint-color($bg, 30%);
+  background: $bg;
+  $text-color: funcs.bg-text-color($bg);
+  color: $text-color !important;
+  text-shadow: 1px 1px 1px rgba(color.invert($text-color), 0.5);
+  transition: background ease 0.3s;
+  cursor: pointer;
+  user-select: none;
+  box-sizing: border-box;
+  &:hover {
+    background: $bg-hover;
+    transition: background ease 0.3s;
+    $text-color: funcs.bg-text-color($bg-hover);
+    color: $text-color !important;
+    text-shadow: 1px 1px 1px rgba(color.invert($text-color), 0.5);
+  }
+  &:active {
+    background: $bg-active;
+    transition: background ease 0.1s;
+    $text-color: funcs.bg-text-color($bg-active);
+    color: $text-color !important;
+    text-shadow: 1px 1px 1px rgba(color.invert($text-color), 0.5);
+  }
+}
+
+.btn-primary {
+  @include button-mixin(
+    map.get(config.$primary-shades, "300"), 
+    map.get(config.$primary-shades, "400"), 
+    map.get(config.$primary-shades, "900")
+  );
+}
+
+.btn-secondary {
+  @include button-mixin(
+    map.get(config.$secondary-shades, "600"), 
+    map.get(config.$secondary-shades, "700"), 
+    map.get(config.$secondary-shades, "900")
+  );
+}
+
+.btn-gray {
+  @include button-mixin(
+    map.get(config.$gray-shades, "300"), 
+    map.get(config.$gray-shades, "400"), 
+    map.get(config.$gray-shades, "900")
+  );
+}
+
+.btn-dark {
+  @include button-mixin(
+    map.get(config.$dark-shades, "100"), 
+    map.get(config.$dark-shades, "300"), 
+    #000
+  );
+}
+.btn-light {
+  @include button-mixin(
+    map.get(config.$light-shades, "200"), 
+    map.get(config.$light-shades, "300"), 
+    map.get(config.$light-shades, "500")
+  );
+}
+
+input,
+input[type=email],
+input[type=number],
+input[type=search],
+input[type=text],
+input[type=tel],
+input[type=url],
+input[type=password],
+textarea,
+.textarea {
+  all: unset;
+  background: var(--input-background);
+  color: var(--input-color);
+  $border: #000;
+  border: var(--input-border);
+  font-size: 0.9em;
+  padding: 0.2em 0.5em;
+  border-radius: config.$rounding;
+  box-sizing: border-box;
+}
+
+//hacks to disable the ugly spin buttons
+//chrome
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+}
+//moz
+input[type=number] { 
+  -moz-appearance: textfield;
+  appearance: textfield;
+  margin: 0; 
+}
+
+input:-webkit-autofill,
+input[type=email]:-webkit-autofill,
+input[type=number]:-webkit-autofill,
+input[type=search]:-webkit-autofill,
+input[type=text]:-webkit-autofill,
+input[type=tel]:-webkit-autofill,
+input[type=url]:-webkit-autofill,
+input[type=password]:-webkit-autofill,
+textarea:-webkit-autofill,
+.textarea:-webkit-autofill {
+  outline: none !important;
+  -webkit-text-fill-color: white !important;
+  -webkit-transition: background-color 5500s ease-in-out 0s;
+  transition: background-color 5500s ease-in-out 0s;
+}
+
+a.link:link {
+  transition: color ease 0.25s;
+  cursor: pointer;
+  color: map.get(config.$link-colors, "link");
+}
+a.link:visited {
+  transition: color ease 0.25s;
+  color: map.get(config.$link-colors, "visited");
+}
+a.link:hover {
+  transition: color ease 0.1s;
+  color: map.get(config.$link-colors, "hover");
+}
+a.link:active {
+  color: map.get(config.$link-colors, "active");
+}

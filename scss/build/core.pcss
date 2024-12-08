@@ -129,6 +129,8 @@ ul, ol {
   background: #000000;
   padding: 0.5em;
   flex-grow: 1;
+  border-top-right-radius: 0.5em;
+  border-top-left-radius: 0.5em;
   box-sizing: border-box;
 }
 
@@ -210,6 +212,19 @@ footer > * {
   flex-direction: row;
   gap: 0.4em;
   align-items: center;
+}
+
+.drawing-canvas {
+  width: 250px;
+  border-radius: 0.5em;
+  box-sizing: border-box;
+  border: #363636 solid 0.1em;
+}
+.drawing-canvas > canvas {
+  border-radius: 0.5em;
+  background: #fff;
+  width: 100%;
+  height: 100%;
 }
 
 /*# sourceMappingURL=core.pcss.map */

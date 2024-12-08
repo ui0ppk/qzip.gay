@@ -149,13 +149,12 @@ ul, ol {
   gap: 0.4em;
   align-items: center;
   cursor: pointer;
-  transition: color 0.4s ease, font-size 0.4s ease;
+  transition: font-size 0.4s ease;
   padding: 0 0.75em;
   font-size: 1.2em;
 }
 .navbar-items > *:hover {
-  transition: color 0.2s ease, font-size 0.2s ease;
-  color: #d0d0d0;
+  transition: font-size 0.2s ease;
   font-size: 1.65em;
   font-weight: 600;
 }
@@ -225,6 +224,48 @@ footer > * {
   background: #fff;
   width: 100%;
   height: 100%;
+}
+
+.hover-to-boom {
+  position: relative;
+}
+.hover-to-boom::after {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  content: "";
+  width: 142px;
+  height: 196px;
+  background: url("/assets/img/explosion-boom.gif");
+  display: none;
+}
+.hover-to-boom:hover::after {
+  display: block;
+}
+
+.silly-image-manipulation {
+  animation: silly-image-anim 15s linear 0s infinite backwards;
+  animation-play-state: running;
+}
+.silly-image-manipulation:hover {
+  animation-play-state: paused;
+}
+
+@keyframes silly-image-anim {
+  0% {
+    transform: rotate3d(1, 2, 3, 0deg);
+  }
+  100% {
+    transform: rotate3d(3, 2, 1, 360deg);
+  }
+}
+.project-posts {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.25em;
 }
 
 /*# sourceMappingURL=core.pcss.map */

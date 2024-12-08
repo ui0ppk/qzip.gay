@@ -1,8 +1,13 @@
 {% extends "html.twig" %}
 
 {% block content %}
-<img style="float: right; filter:drop-shadow(1px 1px 1px white) drop-shadow(-1px -1px 1px white); padding: 0 2.5em;" 
-title="sona of me sitting" alt="sona of me sitting" src="/assets/img/hesit.png" height="256">
+<div x-data="{}">
+<div x-ref="silly_container" x-init="Math.round(Math.random()) == 0 
+? $refs.silly_image.classList.add(`silly-image-manipulation`) 
+: $refs.silly_container.classList.add(`hover-to-boom`) " style="float: right;"> 
+  <img style="filter:drop-shadow(1px 1px 1px white) drop-shadow(-1px -1px 1px white); padding: 0 2.5em;" 
+  title="sona of me sitting" x-ref="silly_image" alt="sona of me sitting" src="/assets/img/hesit.png" height="256">
+</div>
 <div>
   <h3>home</h3>
   <div>hai, welcome to my website! it's currently a work in progress, but hopefully you like it! it's a complete overhaul from my old website, new CSS and all.</div>
@@ -14,5 +19,6 @@ title="sona of me sitting" alt="sona of me sitting" src="/assets/img/hesit.png" 
   <br>
   <div>anyways, i plan to add a feature from strawpage - drawing submissions, because it's a cool idea lol.</div>
   <br>
+</div>
 </div>
 {% endblock %}

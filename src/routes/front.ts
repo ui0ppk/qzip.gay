@@ -5,8 +5,8 @@ import async_handler from 'express-async-handler';
 routes.get("/", async_handler((req: Request, res: Response) => {
   res.render("index.twig");
 }));
-routes.get("/projects", async_handler((req: Request, res: Response) => {
-  res.render("error.twig");
+routes.get("/projects/", async_handler((req: Request, res: Response) => {
+  res.render("projects.twig");
 }));
 
 export default routes;

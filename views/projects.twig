@@ -1,0 +1,13 @@
+{% extends "html.twig" %}
+
+{% block content %}
+<div x-data="{}" class="project-posts">
+<template x-for="(i, index) in (1, 20)">
+  <div>
+    <div class="post-image">
+      <img src="/assets/img/hesit.png" width=12>
+    </div>
+  </div>
+</template>
+</div>
+{% endblock %}

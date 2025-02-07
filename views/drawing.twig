@@ -1,0 +1,160 @@
+{% extends "html.twig" %}
+
+{% block content %}
+<div class="drawing-ide" x-data="{
+  color_defaults: [`#acee70`, `#6242a3`, `#926ed8`, `#ffc2d3`, `#f39eb5`, `#f3f3f3`, `#000000`],
+  past_colors: $persist([]).as(`draw.pastcolors`),
+  brush: {
+    size: $persist(4).as(`draw.brush.size`)
+  },
+  layers: [`over`, `under`],
+  draw: false,
+
+  focused: false,
+}"
+@prompt-to-send="popup.new({
+  title: `send drawing submission`,
+  body: `are you sure you want to send the submission?`,
+
+  buttons: [
+    {
+      title: `send`,
+      click: (close) => { 
+        $dispatch(`send-to-server`);
+        close();
+      }
+    }
+  ]
+})"
+@send-to-server="fetch(`/api/v1/drawing/create`, {
+  method: `POST`,
+  headers: {
+    'Content-Type': `application/json`,
+  },
+  body: JSON.stringify({
+    drawing: draw.get_as_image()
+  })
+})"
+x-init="$nextTick(() => {
+  draw = new entity_draw_canvas($refs.draw, {});
+})" x-effect="if(draw) { draw.brush.size = brush.size; }">
+  <div class="drawing-canvas" tabindex=1
+  @focus="focused = true;" @blur="focused = false;"
+
+  @wheel="if(event.wheelDeltaY < 0) { draw.zoom_out(); } else { draw.zoom_in(); }" 
+
+  @keydown.left.prevent="brush.size -= 1;"
+  @keydown.right.prevent="brush.size += 1;"
+  @keydown.z.ctrl="draw.undo();"
+  @keydown.e="draw.brush.tool = `eraser`;"
+  @keydown.b="draw.brush.tool = `draw`;">
+    <div class="color-bar">
+      <div class="control color-picker bi bi-palette">
+        <input type="color" @change="past_colors.unshift($el.value); draw.brush.color = $el.value;">
+      </div>
+      <div class="color" :style="`background: ${draw?.brush?.color}`"></div>
+      <div class="divider"></div>
+      <template x-for="color in [...new Set(past_colors)]">
+        <div class="color click" 
+        @click="draw.brush.color = color;" 
+        :class="(draw && color === draw.brush.color) ? `active` : ``"
+        :style="`background: ${color}`"></div>
+      </template>
+
+      <template x-if="past_colors.length === 0">
+        <div class="flip-me-bitch">so empty..</div>
+      </template>
+      <div class="divider bottom"></div>
+      <div class="control bi bi-arrow-counterclockwise" @click="past_colors = color_defaults;"></div>
+      <div class="control bi bi-trash3-fill" @click="past_colors = [];"></div>
+    </div>
+    <div class="canvas-body">
+      <div class="canvas-bg">
+        <div class="canvas-wrapper">
+          <canvas x-ref="draw"></canvas>
+        </div>
+      </div>
+      <div class="controls">
+        <div :disabled="(draw && draw.brush.tool === `draw`)"
+        @click="draw.brush.tool = `draw`;" 
+        class="control bi bi-brush-fill"></div>
+
+        <div :disabled="(draw && draw.brush.tool === `eraser`)"
+        @click="draw.brush.tool = `eraser`;" 
+        class="control bi bi-eraser-fill"></div>
+
+        <div :class="(draw && draw.brush.layer === `over` ? `bi-front` : `bi-subtract`)"
+        @click="draw.brush.layer = utils.array.cycle_next(draw.brush.layer, layers);" 
+        class="control bi"></div>
+
+        <div @click="draw.zoom_out();" style="margin-left: auto;" class="control bi bi-zoom-out"></div>
+        <div @click="draw.zoom_in();" class="control bi bi-zoom-in"></div>
+
+        <div class="divider"></div>
+        <div @click="draw.undo();" class="control bi bi-arrow-counterclockwise"></div>
+        <div @click="draw.clear();" class="control bi bi-trash3-fill"></div>
+
+        <div class="divider"></div>
+
+        <div @click="$dispatch(`prompt-to-send`);" class="control bi bi-send"></div>
+      </div>
+
+      <div class="brush-size-container">
+        <div class="count" contenteditable 
+        x-data="{text_focused: false}"
+        @focus="text_focused = true" @blur="text_focused = false;"
+        @input="brush.size = Number($el.textContent);" 
+        x-text="!text_focused ? (draw ? draw.brush.size : `---`) : $el.textContent"></div>
+        <input type="range" min="1" max="32" step="1" :value="brush.size" @input="brush.size = $el.value;">
+      </div>
+    </div>
+  </div>
+
+  <div class="help-controls">
+    <div class="title">
+      <i class="bi bi-keyboard"></i>
+      <div>controls</div>
+
+      <div class="bi bi-circle-fill focused-or-not" title="lights up if the canvas is focused" 
+      :enabled="focused"></div>
+    </div>
+    <div class="body">
+      <div>
+        <div class="key">
+          <span>undo</span>
+        </div>
+        <div><kbd>CTRL</kbd> + <kbd>Z</kbd></div>
+      </div>
+
+      <div>
+        <div class="key">
+          <span>normal brush</span>
+        </div>
+        <div><kbd>B</kbd></div>
+      </div>
+
+      <div>
+        <div class="key">
+          <span>eraser brush</span>
+        </div>
+        <div><kbd>E</kbd></div>
+      </div>
+
+
+      <div>
+        <div class="key">
+          <span>brush size down</span>
+        </div>
+        <div><kbd>←</kbd></div>
+      </div>
+      <div>
+        <div class="key">
+          <span>brush size up</span>
+        </div>
+        <div><kbd>→</kbd></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

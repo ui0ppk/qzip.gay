@@ -1,0 +1,56 @@
+{% extends "html.twig" %}
+{% set title = id %}
+
+{% block content %}
+<div class="user-profile-parent" x-data="{
+  user_id: `{{id}}`, // it appears.. somehow..
+  fetched: false,
+  data: {}
+}"
+@fetch="fetch(`/api/v1/user/get`, {
+  method: `POST`,
+  headers: {
+    'Content-Type': `application/json`,
+  },
+  body: JSON.stringify({
+    id: user_id
+  })
+}).then((response) => response.json()).then((json) => {
+  fetched = true;
+  data = json;
+})" x-init="$nextTick(() => {
+  $dispatch(`fetch`);
+})">
+  <template x-if="!fetched">
+    <div x-text="`loading \`${user_id}\`..`"></div>
+  </template>
+  <template x-if="fetched">
+    <div class="user-profile">
+      <div class="user-frontface">
+        <div class="user-banner"></div>
+
+        <div class="user-row">
+          <div class="user-picture"></div>
+          <div class="user-info">
+            <div x-text="data.username" class="username"></div>
+            <div x-text="data.description" class="description"></div>
+            <div class="user-row-buttons">
+              {% include "./component/boop_btn.twig" with { user_id: id } %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="posts-n-info-row">
+        <div class="info-side">INFO!</div>
+        <div class="user-posts">
+        <template x-for="i in 9">
+          <div x-text="`paw ${i == 2 ? `tuah` : i}`"></div>
+        </template>
+        </div>
+      </div>
+
+    </div>
+  </template>
+</div>
+{% endblock %}

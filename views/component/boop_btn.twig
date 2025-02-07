@@ -1,0 +1,15 @@
+<button class="button boop-button" x-data="{boops: 0, userid: `{{user_id}}` }" 
+@boop="boops += 1; 
+if(event.detail.sound ?? false) { sounds.squeek(); } 
+fetch(`/api/v1/user/boop?get_only=${event.detail.get ?? false}&id=${userid}`, {method: `GET`})
+.then((response) => response.text()).then((amount) => {
+  boops = Number(amount);
+})" 
+@click.debounce.450ms="$el.removeAttribute(`disabled`);"
+@click.throttle.450ms="$el.setAttribute(`disabled`, true); $dispatch(`boop`, { sound: true });"
+x-init="$nextTick(() => { $dispatch(`boop`, { get: true }); if(userid.length === 0) { $el.setAttribute(`disabled`, true); } })">
+  <img src="/assets/img/bappers.png" width=28 height=28> 
+  <div class="column">
+    <span class="h5">BOOP</span> <small x-text="`${boops.toLocaleString('en-US')}`"></small>
+  </div>
+</button>

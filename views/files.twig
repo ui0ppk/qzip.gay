@@ -1,0 +1,342 @@
+{% extends "html.twig" %}
+
+{% block content %}
+<div x-data="{
+  debug_menu: $persist(false).as(`files.debug_menu`),
+  settings_dropdown: false,
+
+  categories: {
+    ready: false,
+    items: [],
+  },
+
+  layout: {
+    value: $persist(`list`).as(`files.layout`),
+    types: [`list`, `grid`, /*`gallery`*/],
+    grid: {
+      zoom: $persist(2).as(`files.layout.grid.zoom`),
+    }
+  },
+  bg_color: {
+    value: $persist(`white`).as(`files.preview.bg_color`),
+    types: [`white`, `black`, `transparent`],
+  },
+
+  search: url_params.get(`q`) ?? ``,
+  files: {
+    ready: false,
+    searching: false,
+    code: `OK`,
+    items: [],
+  },
+  category: url_params.get(`category`) ?? $persist(``).as(`files.category`),
+
+  view_file: {
+    viewing: false,
+    ready: false,
+    url: ``,
+    raw: ``,
+    data: {},
+
+    show_info: $persist(true).as(`files.view_file.show_info`),
+  },
+  get_icon_from_mime: (mime) => {
+    switch(mime) {
+      case `text/plain`:
+        return `file-earmark-text`;
+      case mime.startsWith(`image/`) && mime:
+        return `file-earmark-image`;
+      default:
+        return `file`;
+    }
+  },
+  get_view: () => { 
+    if($data.category === `` && (
+      !$data.files.ready || $data.search === ``
+    )) {
+      return `categories.${$data.layout.value}`;
+    } else {
+    if($data.files.ready) {
+      if($data.files.items.length === 0) {
+        return `err.empty_dir`;
+      } else if($data.files.code == `OK`) {
+        return `files.${$data.layout.value}`;
+      } else {
+        return `unknown`;
+      }
+    } else {
+      return `files.loading`;
+    }
+    }
+  }
+}" 
+@get-categories="$dispatch(`close-file`); fetch(`/api/v1/file-browser/categories`, {
+  method: `GET`,
+  headers: {
+    'Content-Type': `application/json`,
+  },
+}).then((response) => response.json()).then((json) => {
+  categories.items = json;
+  categories.ready = true;
+});
+" 
+@browse-category="$dispatch(`close-file`); fetch(`/api/v1/file-browser/`, {
+  method: `POST`,
+  headers: {
+    'Content-Type': `application/json`,
+  },
+	body: JSON.stringify({
+    search: search,
+  	category: category
+	})
+}).then((response) => response.json()).then((json) => {
+  files.code = json.code;
+  files.items = json.data.files;
+  if(search !== ``) files.searching = true;
+  files.ready = true;
+});
+" 
+@get-file="const id = event.detail.id;
+fetch(`/api/v1/file-browser/get-file-info?id=${id}`, {
+  method: `GET`,
+  headers: {
+    'Content-Type': `application/json`,
+  },
+}).then((response) => response.json()).then((json) => {
+  view_file.data = json.data;
+  view_file.url = json.data.asset;
+  fetch(`/api/v1/file-browser/get-file-data?id=${id}`)
+  .then((response) => response.text()).then((data) => {
+    view_file.raw = data;
+  });
+  view_file.ready = true;
+});
+" 
+@toggle-between-bg-colors="bg_color.value = utils.array.cycle_next(bg_color.value, bg_color.types);" 
+@toggle-between-layout-types="layout.value = utils.array.cycle_next(layout.value, layout.types);" 
+@goto-category="(() => { if(view_file.viewing) {
+    $dispatch(`close-file`); 
+  } else { 
+    category = event.detail.category ?? ``; 
+    files.ready = false;
+    files.searching = false;
+    if(category !== ``) {
+      $dispatch(`browse-category`);
+    } 
+  }
+})()" 
+@open-file="view_file.ready = false; $dispatch(`get-file`, event.detail); view_file.viewing = true;"  
+@close-file="view_file.viewing = false;" 
+@add-tag="const tag = event.detail.tag;
+const tags = search.split(` `);
+if(!tags.includes(tag)) {
+  if(!search.endsWith(` `) && search.length !== 0) {
+    search += ` `;
+  }
+  search += `${tag}`;
+}
+" 
+x-init="$nextTick(() => {
+  $dispatch(`get-categories`);
+  if(category !== `` || search.length > 0) $dispatch(`browse-category`)
+})" class="file-browser-parent">
+    <div class="file-browser">
+      <div class="fb-info-bar">
+        <div class="fb-info-bar-icon bi bi-hdd-network"></div>
+        <div class="fb-info-bar-crumbs">
+          <div class="crumb" @click="$dispatch(`goto-category`, { category: `` })">
+            <div class="slash">/</div>
+            <div :class="category === `` ? `active` : ``">files</div>
+          </div>
+          <template x-if="category !== ``">
+            <div class="crumb" @click="$dispatch(`goto-category`, { category: category })">
+              <div class="slash">/</div>
+              <div :class="category === category ? `active` : ``" x-text="category"></div>
+            </div>
+          </template>
+        </div>
+        <div class="fb-info-bar-more-icon bi bi-three-dots-vertical" 
+        @click="settings_dropdown = !settings_dropdown;" x-ref="fb_more"></div>
+        <div class="fb-more-dropdown" x-cloak
+        x-transition:enter.duration.100ms x-transition:leave.duration.200ms
+        @click.outside="settings_dropdown = false;"
+        @keyup.escape.window="settings_dropdown = false;"
+        x-show="settings_dropdown" x-anchor.bottom-end="$refs.fb_more">
+          <div class="setting" x-show="layout.value == `grid`">
+            <input type="range" min="2" max="5" step="0.5" style="width: 100%;" :value="layout.grid.zoom" @input="layout.grid.zoom = $el.value;">
+            <label class="text" x-text="`zoom (${Number(layout.grid.zoom).toFixed(1)})`"></label>
+          </div>
+          <div class="setting" @click="debug_menu = !debug_menu">
+            <input :value="debug_menu" type="checkbox" class="input">
+            <label class="text">DEBUG MENU</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="fb-extra-bar">
+        <div class="crumb-control crumb-up" title="go up a directory/exit file viewer"
+        @click="$dispatch(`goto-category`, { category: `` })"></div>
+        <div class="input searchbar">
+          <input x-model="search" type="text" class="search" @keydown.enter="$dispatch(`browse-category`)" placeholder="funny.png">
+          <button class="submit bi bi-search"></buttton>
+        </div>
+        <div class="crumb-control crumb-layout-toggle" title="toggle layout" :layout="layout.value" 
+        @click="$dispatch(`toggle-between-layout-types`)"></div>
+      </div>
+
+      <div class="file-side-by-side">
+
+        <template x-if="get_view() === `files.loading`">
+          <div class="fb-generic-error-infocard">
+            <div class="classic-spinner"></div>
+          </div>
+        </template>
+        <template x-if="get_view() === `err.empty_dir`">
+          <div class="fb-generic-error-infocard">
+            <div class="icon bi bi-folder2-open"></div>
+            <div class="name">empty category</div>
+            <div class="desc">there are no items in this category</div>
+          </div>
+        </template>
+        <template x-if="get_view() === `err.private_dir`">
+          <div class="fb-generic-error-infocard">
+            <div class="icon bi bi-folder-x"></div>
+            <div class="name">private directory</div>
+            <div class="desc">you are not authorized to access it</div>
+          </div>
+        </template>
+
+        <template x-if="[`categories.list`, `categories.grid`].includes(get_view())">
+          <div :class="get_view().includes('list') ? 'fb-files-list' : 'fb-files-grid'" :style="get_view().includes('grid') ? `--zoom: ${layout.grid.zoom}` : ''">
+          <template x-for="cat, cat_name in categories.items">
+            <div class="file"
+            @click="$dispatch(`goto-category`, { category: cat_name })">
+              <div class="bi file-icon" :class="cat.count > 0 ? `bi-folder2` : `bi-folder2-open`"></div>
+              <div class="file-info">
+                <div class="file-name">
+                  <span x-text="cat_name"></span>
+                  <span class="file-count"> (<b x-text="`${cat.count ?? 0}`"></b>)</span>
+                </div>
+                <div class="file-info-row">
+                  <div x-text="utils.formatting.size_byte(cat.size ?? 0) ?? '0B'" class="file-size"></div>
+                </div>
+              </div>
+            </div>
+          </template>
+          </div>
+        </template>
+
+        <template x-if="[`files.list`, `files.grid`].includes(get_view())">
+          <div :class="get_view().includes('list') ? 'fb-files-list' : 'fb-files-grid'" :style="get_view().includes('grid') ? `--zoom: ${layout.grid.zoom}` : ''">
+          <template x-for="file in files.items">
+            <div class="file"
+            @click="$dispatch(`open-file`, { id: file.id })">
+              <div class="bi file-icon" :class="`bi-${get_icon_from_mime(file.mime)}`"></div>
+              <div class="file-info">
+                <div x-text="`${files.searching && file.category !== category ? file.category + `/` : ``}${file.name}`" class="file-name"></div>
+                <div x-text="utils.formatting.size_byte(file.size ?? 0) ?? `0B`" class="file-size"></div>
+              </div>
+            </div>
+          </template>
+          </div>
+        </template>
+
+    <div class="debug-block" x-cloak x-show="debug_menu">
+      <h5 class="title">
+        <i class="bi bi-bug"></i> 
+        <span class="text">SECRET DeBuG 9000</span>
+        <i class="bi bi-x-lg" @click="debug_menu = false;"></i>  
+      </h5>
+      <div class="items">
+        <span>
+          <b x-text="`VIEW:`"></b> <span x-text="`${get_view()}`"></span>
+        </span>
+        <span>
+          <b x-text="`CATEGORY:`"></b> <span x-text="`${category !== `` ? category : `all`}`"></span>
+        </span>
+      </div>
+
+    </div>
+
+        <div x-transition x-transition:enter.duration.50ms x-transition:leave.duration.150ms x-cloak
+        x-show="view_file.viewing" x-cloak class="file-viewer">
+          <div :bg-color="view_file.data.mime?.startsWith(`image/`) ? bg_color.value : ``" class="file-viewer-contents">
+            <template x-if="!view_file.ready">
+              <div class="loading classic-spinner"></div>
+            </template>
+
+            <template x-if="view_file.data.mime?.startsWith(`image/`)">
+              <div class="toggle-bg bottom-left bi bi-highlights" @click="$dispatch(`toggle-between-bg-colors`);"></div>
+            </template>
+            <template x-if="view_file.ready && view_file.data.mime?.startsWith(`image/`)">
+              <img class="img" :src="view_file.url">
+            </template>
+            
+
+            <div class="toggle-bg bottom-right bi bi-layout-sidebar-inset-reverse" @click="view_file.show_info = !view_file.show_info"></div>
+            <template x-if="view_file.ready  && !view_file.data.mime?.startsWith(`image/`)">
+              <div class="text" x-text="view_file.raw.length < 4096 
+                ? view_file.raw 
+                : `cannot display a file larger than 4096 characters.`"></div>
+            </template>
+          </div>
+          <div class="file-viewer-info" x-show="view_file.show_info">
+            <div class="file-viewer-bar">
+              <div @click="$dispatch(`close-file`)" title="exit file viewer" class="file-viewer-btn close bi bi-chevron-left"></div>
+              <div class="file-viewer-name" x-text="view_file.data.name"></div>
+              <div @click="window.open(view_file.url, `_blank`)" title="open externally" class="file-viewer-btn open-externally bi bi-box-arrow-up-right"></div>
+            </div>
+            <div class="file-viewer-padding">
+              <div class="user-row">
+                <img src="/assets/img/bepisdrink-transparent.png" width=48 height=48> 
+                <div class="user-info">
+                  <span class="username" @click="$dispatch(`add-tag`, {
+                    tag: `username:${view_file.data?.user?.username}`
+                  })" 
+                  x-text="view_file.data?.user?.username ?? `unknown`"></span>
+                  <small x-text="`${view_file.data?.user?.posts ?? 0} post${view_file.data?.user?.posts.length !== 1 ? `s` : ``}`"></small>
+                </div>
+              </div>
+              <div class="separator"></div>
+              <div class="file-info">
+                <div><b>posted</b>: <span x-time="view_file.data.created" x-time.ago="true"></span>, on <span x-time="view_file.data.created" x-time:mask="yyyy-MM-dd hh:mm:ss a"></span></div>
+                <div><b>size</b>: <span x-text="utils.formatting.size_byte(view_file.data.size ?? 0, 3) ?? '0B'"></span></div>
+                <div><b>mime</b>: <span x-text="view_file.data.mime"></span></div>
+                <div><b>tags</b>: <span x-text="view_file.data.tags"></span></div>
+              </div>
+
+              <div class="separator"></div>
+              <div class="reviews">
+                <h5>reviews (<span x-text="view_file?.data?.reviews?.length ?? 0">?</span>)</h5>
+                <template x-if="(view_file?.data?.reviews?.length ?? 0) > 0">
+                <div class="items">
+                  <template x-for="review in view_file?.data?.reviews">
+                    <div>
+                      <span x-text="review.username"></span>:
+                      <span x-text="review.text"></span>
+                    </div>
+                  </template> 
+                </div>
+                </template> 
+                <template x-if="(view_file?.data?.reviews?.length ?? 0) === 0">
+                <div>
+                empty..
+                </div>
+                </template> 
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# <div class="file-viewer" x-ref="file_viewer">
+          <div class="file-icon-slash-image">
+            <svg xmlns="http://www.w3.org/2000/svg" class="file-icon-but-ibig" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+              <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+            </svg>
+          </div>
+        </div> #}
+      </div>
+    </div>
+</div>
+{% endblock %}

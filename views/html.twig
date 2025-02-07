@@ -1,59 +1,190 @@
-{%- if x_spa -%}
-{"title": "{{ title ?? req.path }} | {{ config.site.name }}"}\\
-{%- block content %}{% endblock -%}
-{%- else -%}
 <!doctype html>
-<html>
+<html x-data="{ current_url: window.location.pathname }">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/assets/css/normalize.css">
     <link rel="stylesheet" href="/assets/css/core.css">
     <link rel="stylesheet" href="/assets/css/bootstrap-icons.min.css">
-    {# <link rel="icon" type="image/png" href="/assets/img/logo-t_64.png"> #}
+    <link rel="icon" href="/favicon.ico" />
     <meta property="og:site_name" content="{{ config.site.name }}">
-    <meta property="og:image" content="/assets/img/logo-t_64.png" />
+    <meta property="og:image" content="/assets/img/bepisdrink-transparent.png" />
     <meta content="{{ title ?? pagename }}" property="og:title">
     <meta content="{{ config.site.desc }}" property="og:description">
     <meta name="theme-color" content="#650fde">
-    <script defer src="/assets/js/alpine.js"></script>
+    <script defer src="/assets/js/draw-canvas.js"></script>
     <script defer src="/assets/js/core.js"></script>
+
+    <script src="/assets/js/luxon.min.js"></script>
+
+    <script defer src="/assets/js/alpine/anchor.js"></script>
+    <script defer src="/assets/js/alpine/mask.js"></script>
+    <script defer src="/assets/js/alpine/collapse.js"></script>
+    <script defer src="/assets/js/alpine/persist.js"></script>
+    <script defer src="/assets/js/alpine/resize.js"></script>
+    <script defer src="/assets/js/alpine/sort.js"></script>
+    <script defer src="/assets/js/alpine/more.js"></script>
+    <script defer src="/assets/js/alpine/index.js"></script>
     <title>{{ title ?? req.path }} | {{ config.site.name }}</title>
   </head>
   <body>
     <div class="container">
-      <div class="navbar" x-data="{
-        current_item: {},
+      <noscript>
+        <a href="https://support.google.com/adsense/answer/12654?hl=en" class="no-js-warning">this site will never work without the glorious JavaScript™, so please enable it, atleast for me, pretty plzzzz >~< :33 nyaaaa~~~</a>
+      </noscript>
+      <div x-data="{
         items: [
-          { name: `home`, url: `/` },
-          { name: `projects`, url: `/projects/` },
-          { name: `art`, url: `/art/` },
-          { name: `files`, url: `/files/` },
+          { name: `admin`, url: `/admin/`, loggedin: true, role_req: 3 },
+          { name: `profile`, url: `/user/${$store.cuser?.id}/`, loggedin: true },
+          { name: `settings`, url: `/settings/`, loggedin: false,
+            custom: () => {
+              popup.new({
+                title: `settings`,
+                body: `hi`,
+              });
+            }
+          },
+          { name: `upload file`, url: `/upload/`, loggedin: true },
+        ],
+
+        loggedout_items: [
+          { name: `login`, url: `/login` },
+          { name: `register`, url: `/register` },
+        ]
+      }"
+      class="user-bar">
+        <div class="online"
+        @mouseover.throttle.1000ms="visitors.visit();" 
+        x-effect="(() => {
+          $store.visitors_last_updated; // it just works
+          $refs.online_dot.setAttribute(`updated`, true);
+          setTimeout(() => {
+            $refs.online_dot.removeAttribute(`updated`);
+          }, 1000)
+        })();"
+        title="this updates every 30 seconds, or if you hover over this"> 
+          <div x-ref="online_dot" class="dot bi bi-circle-fill"></div>
+          <span class="text" x-text="$store.visitors_count"></span>
+        </div>
+        <div class="items items-main">
+          <template x-for="(item, id) in items">
+            <div 
+            @click="if(typeof item.custom == `function`) { item.custom(); } else { current_url = item.url; app.set_url(item.url, false, item.redirect); }" 
+            :active="(item.url === current_url) ? true : false" 
+            x-show="(item.role_req <= $store.cuser?.roles)
+              ? true
+              : ($store.loggedin || !item.loggedin)" x-cloak
+            x-text="`[${item.name}]`" 
+            class="item">^.^</div>
+          </template>
+        </div>
+        <template x-if="$store.loggedin">
+        <div class="username-container" x-ref="username_div" x-data="{ user_dropdown: false }" 
+        @keyup.escape.window="user_dropdown = false;"
+        @click.outside="user_dropdown = false;">
+          <div class="username"
+          @click="user_dropdown = !user_dropdown;">
+            <span class="text" x-text="$store.cuser?.username ?? `>~<`"></span>
+            <div class="icon bi bi-person-gear"></div>  
+          </div> 
+          <div x-show="user_dropdown" class="dropdown" x-transition x-anchor.bottom-end="$refs.username_div">
+            <button class="button logout-btn"
+            @click="cuser.logout(); window.location.href = `/login`;">logout</button>
+          </div>
+        </div>
+        </template>
+        <template x-if="!$store.loggedin">
+        <div class="items loggedout">
+          <template x-for="(item, id) in loggedout_items">
+            <div :active="(item.url === current_url) ? true : false" class="item"
+            @click="current_url = item.url; app.set_url(item.url, false, item.redirect);" x-text="`[${item.name ?? `^.^`}]`"></div>
+          </template>
+        </div>
+        </template>
+      </div>
+      <div class="navbar" x-data="{
+        items: [
+          { name: `home`, url: `/`, title: `the first thing you see` },
+          { name: `files`, url: `/files/`, title: `see cool files :p` },
+          { name: `projects`, url: `/projects/`, construction: true },
+          { name: `chat`, url: `/chat/`, construction: true },
+          { name: `drawing`, url: `/drawing/`, title: `send me cool drawings :3c` },
+          { name: `discord`, url: `https://discord.gg/7x7QKP2jM6`, title: `my hangout server`, redirect: true },
         ]
       }">
         <div class="navbar-branding">
-          <h2>qzip's website</h2>
+          <div class="version" x-text="$store.app?.version ?? `x.x.x`"></div>
+          <div class="credit">by: <a target="_blank" href="//x.com/mekozinha">@mekozinha</a></div>
+          <div class="brand">qzip's website</div>
         </div>
         <div class="navbar-items">
           <template x-for="(item, id) in items">
-            <div @click="app.set_url(item.url); current_item = items[id];" :active="current_item == items[id]" x-text="item.name">^.^</div>
+            <div :active="(item.url === current_url) ? true : false" 
+            :construction="item.construction ? true : false"  
+            :title="item.construction ? `under construction!` : item.title 
+              ? item.title : `${item.url}`"
+            class="item"
+            @click="if(item.construction) {return;} current_url = item.url; app.set_url(item.url, false, item.redirect);" x-text="item.name ?? `^.^`"></div>
           </template>
         </div>
       </div>
       <main>{% block content %}{% endblock %}</main>
-      <footer>
-        <div>made with <i class="bi bi-heart-fill"></i> and Alpine.js</div> 
-        <div class="end">qzip | testcore-labs @2024</div>
-      </footer>
+      <div class="popups" x-data="{ popups: [] }" hidden :hidden="popups.length === 0"
+      @close-popup.window="const popup_id = event.detail.id;
+      if(!popups[popup_id]) return;
+      popups[popup_id].show = false;
+      setTimeout(() => { popups.splice(popup_id, 1); }, 150);"
+      @new-popup.window="const popup = event.detail;
+      const id = popups.push({
+        title: popup.title,
+        body: popup.body,
 
-      {# to finish #}
+        show: popup.show ?? true,
+
+        buttons: popup.buttons
+      });
+      if(typeof popup.callback == `function`) popup.callback(id);">
+        <div class="popups-items">
+          <template x-for="popup, key in popups" x-key="key">
+          <div class="popup" :id="`popup-${key}`"
+          x-show="popup.show" x-transition x-transition.duration.200ms>
+            <div class="bar">
+              <div class="title" x-text="popup.title"></div>
+              <div class="btns">
+                <div class="button btn-close bi bi-x-lg" @click="$dispatch(`close-popup`, { id: key })"></div>
+              </div>
+            </div>
+            <div class="body" x-html="popup.body">:3</div>
+
+            <div class="buttons" x-show="(popup?.buttons ?? []).length !== 0">
+              <template x-for="button in popup?.buttons">
+                <button class="button" 
+                @click="typeof button.click == `function` 
+                ? button.click(
+                  () => $dispatch(`close-popup`, { id: key })
+                ) : false;" 
+                x-text="button.title"></button>
+              </template>
+            </div>
+          </div>
+          </template>
+        </div>
+
+        <div class="close-all button">
+          <div @click="popups = [];" x-text="`close (${popups.length})`"></div>
+        </div>
+      </div>
+
       {# <music>
         <div class="bi bi-play-fill"></div>
         <div class="progress-bar">
           <div class="progressed" style="width: 50%;"></div>
         </div>
       </music> #}
+      <footer x-data="">
+        <div>made with <i class="bi bi-heart-fill"></i> and <a href="//alpinejs.dev/">Alpine.js</a></div> 
+        <div class="end">qzip | testcore-labs <span x-text="`@${(new Date()).getFullYear()}`">----</span></div>
+      </footer>
     </div>
   </body>
 </html>
-{%- endif -%}

@@ -1,0 +1,78 @@
+{% extends "html.twig" %}
+
+{% block content %}
+<div class="register-screen" x-data="{ 
+  error: {
+    success: false,
+    message: ``,
+  },
+  username: ``,
+  password: ``,
+  c_password: ``,
+  invkey: ``,
+
+  never_logout: false,
+}"
+@register="fetch(`/api/v1/user/create`, {
+  method: `POST`,
+  headers: {
+    'Content-Type': `application/json`,
+  },
+	body: JSON.stringify({
+    username: username,
+    password: password,
+    confirm_password: c_password,
+    invite_key: invkey,
+	})
+}).then((response) => response.json()).then((json) => {
+  error.success = json.success;
+  error.message = json.message;
+  const token = json.data?.token;
+  if(token) {
+    cookies.token = {
+      value: token, 
+      expires_in: never_logout ? (3600 * 24 * 30 * 12 * 5) : 3600 * 24,
+      path: `/`
+    };
+    cuser.fetch(token, () => { 
+    // no clue if this works!
+    if(window.PasswordCredential && location.protocol === `https:`) {
+      const credentials = new PasswordCredential({
+        id: username,
+        password: password
+      });
+      navigator.credentials.store(credentials);
+    }
+    
+    window.location.href = url_params.get(`redirect`) ?? `/`; 
+    });
+  }
+});"
+x-init="$nextTick(() => { 
+});">
+
+  <form @submit.prevent="$dispatch(`register`);" autocomplete="on" class="floaty-part">
+    <div class="register-kitty">
+      <div class="register-title">register</div>
+      <img src="/assets/img/staring-cat.png" width=200>
+    </div>
+    <div class="error-box" :success="error.success" x-show="error.message.length !== 0" x-text="error.message"></div>
+    
+    <input type="username" x-model="username"
+    placeholder="username" class="input username-input">
+
+    <input type="password" x-model="password"
+    placeholder="password" class="input password-input">
+    <input type="password" x-model="c_password"
+    placeholder="confirm password" class="input password-input">
+    <input type="text" x-model="invkey"
+    placeholder="invite key" class="input invkey-input">
+    <div class="never-logout-container">
+      <input :value="never_logout" id="never-logout" x-model="never_logout" type="checkbox" class="input">
+      <label for="never-logout">never get logged out</label>
+    </div>
+
+    <button type="submit" class="button register-button">register</button>
+  </form>
+</div>
+{% endblock %}

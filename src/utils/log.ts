@@ -1,6 +1,6 @@
 import colors from "./colors";
-import { log_time, date_format } from './time';
-import env from '../config'
+import { log_time, date_format, info_time } from './time';
+import config from '../config'
 import { printf } from 'fast-printf'
 import root_path from './root_path';
 import fs from 'fs';
@@ -19,7 +19,7 @@ class logs {
   }
 
   private static push(txt: string) {
-    if(!env.log_file) {
+    if(!config.log_file) {
       return;
     } 
     // for removing ansi
@@ -35,7 +35,7 @@ class logs {
   }
 
   static time() {
-    return log_time(Date.now());
+    return info_time(Date.now());
   }
 
   static custom(txt: string | number, from_where: string = "", debug = false) { // from_where lol 
@@ -51,7 +51,7 @@ class logs {
 
 
   static debug(txt: string | number, debug = false) {
-    if(env.debug) {
+    if(config.debug) {
       const message = printf(logs.format, 
         colors.white(logs.time()), 
         colors.green(`debug`) + (debug ? logs.debug_format : ``),
@@ -63,11 +63,30 @@ class logs {
     } // else no output cuz debug ONLY...
   }
 
-  
+  static global(txt: string | number) {
+    const message = printf(logs.format, 
+      colors.white(logs.time()), 
+      colors.gray(`global`),
+      colors.white(txt.toString())
+    );
+    logs.push(message);
+    logs.print(message);
+    return message;
+  }
+  static warn(txt: string | number) {
+    const message = printf(logs.format, 
+      colors.white(logs.time()), 
+      colors.yellow(`warn`),
+      colors.white(txt.toString())
+    );
+    logs.push(message);
+    logs.print(message);
+    return message;
+  }
 
   static request(method: string, path: string, ip: string, ua: string, debug = false) {
     let tr_ua = ua.toString().substring(0, 16).trimEnd(); // trim so truncate looks Nicer And Neater
-    if(env.debug) {
+    if(config.debug) {
       const message = printf(logs.format, 
         colors.white(logs.time()), 
         colors.cyan(method) + (debug ? logs.debug_format : ``),
